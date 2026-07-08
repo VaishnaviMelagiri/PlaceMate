@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}
+
+/* Compact markdown styling for assistant chat bubbles. */
+.chat-md > :first-child {
+  margin-top: 0;
+}
+.chat-md > :last-child {
+  margin-bottom: 0;
+}
+.chat-md p {
+  @apply my-2 leading-relaxed;
+}
+.chat-md ul {
+  @apply my-2 list-disc pl-5;
+}
+.chat-md ol {
+  @apply my-2 list-decimal pl-5;
+}
+.chat-md li {
+  @apply my-0.5;
+}
+.chat-md code {
+  @apply rounded bg-black/10 px-1 py-0.5 text-[0.8em] dark:bg-white/10;
+}
+.chat-md pre {
+  @apply my-2 overflow-x-auto rounded-lg bg-slate-900 p-3 text-xs text-slate-100 dark:bg-black/40;
+}
+.chat-md pre code {
+  @apply bg-transparent p-0;
+}
+.chat-md a {
+  @apply text-brand-600 underline dark:text-brand-300;
+}
+.chat-md h1,
+.chat-md h2,
+.chat-md h3 {
+  @apply mb-1 mt-2 font-semibold;
+}
