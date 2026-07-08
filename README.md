@@ -36,7 +36,8 @@ features.
 - [x] **Phase 1 — Scaffold**: Vite + React + TS + Tailwind, installable PWA
       (manifest + service worker, offline app shell), Supabase client wired to
       `VITE_` env vars.
-- [ ] Phase 2 — Auth (email + Google), protected routes, profile screen
+- [x] **Phase 2 — Auth**: email/password (durable sessions), protected routes,
+      profile screen. (Google sign-in removed — email only.)
 - [ ] Phase 3 — Applications CRUD (list, search, filter, sort)
 - [ ] Phase 4 — Board (Kanban) + Dashboard
 - [x] **Phase 5 — Reminders + snooze**: timezone-aware scheduling, Web Push
