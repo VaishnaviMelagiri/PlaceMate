@@ -10,7 +10,7 @@ truth for Supabase).
 ## Stack
 
 React + Vite + TypeScript + Tailwind (installable PWA) · Supabase (Postgres +
-Auth + RLS + Edge Functions + pg_cron) ·Grok chatbot · Web Push + Resend.
+Auth + RLS + Edge Functions + pg_cron) ·Groq chatbot · Web Push + Resend.
 
 ## Local setup
 
