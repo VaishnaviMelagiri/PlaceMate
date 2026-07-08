@@ -10,9 +10,13 @@ type WBManifest = Array<string | { url: string; revision: string | null }>
 
 // --- Precache the static app shell -------------------------------------------
 // The literal `self.__WB_MANIFEST` is the injection point Workbox replaces at
-// build time. No runtime caching is registered, so Supabase requests always
-// hit the network and are never served stale from cache.
-precacheAndRoute((self as unknown as { __WB_MANIFEST: WBManifest }).__WB_MANIFEST)
+// build time. In `vite dev` it's NOT injected (undefined), so we fall back to an
+// empty list — otherwise precacheAndRoute(undefined) throws and the whole SW
+// fails to register (which kills push). No runtime caching is registered, so
+// Supabase requests always hit the network and are never served stale.
+const wbManifest =
+  (self as unknown as { __WB_MANIFEST?: WBManifest }).__WB_MANIFEST ?? []
+precacheAndRoute(wbManifest)
 cleanupOutdatedCaches() // prunes only old precaches in Cache Storage; never localStorage
 
 sw.skipWaiting()
