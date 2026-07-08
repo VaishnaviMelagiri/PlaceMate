@@ -55,8 +55,10 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
       },
       devOptions: {
-        // Allow testing the service worker in `vite dev` when needed.
-        enabled: false,
+        // Register the service worker in `vite dev` too, so Web Push can be
+        // tested locally (push requires an active service worker). If you ever
+        // see stale modules in dev, hard-reload to update the SW.
+        enabled: true,
         type: 'module',
       },
     }),

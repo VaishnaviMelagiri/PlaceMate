@@ -210,15 +210,18 @@ export default function Reminders() {
               {!pushSupported
                 ? 'Not supported in this browser.'
                 : perm === 'granted'
-                  ? 'Enabled on this device ✓'
+                  ? 'Permission granted. If reminders don’t arrive, tap Re-subscribe.'
                   : perm === 'denied'
                     ? 'Blocked — enable notifications for this site in your browser settings.'
                     : 'Turn on to receive reminders even when the app is closed.'}
             </p>
           </div>
-          {pushSupported && perm !== 'granted' && (
-            <Button onClick={handleEnablePush} disabled={pushBusy || perm === 'denied'}>
-              {pushBusy ? 'Enabling…' : 'Enable'}
+          {/* Always offer the action (unless blocked) so a failed/partial
+              subscription can be retried — permission granted does NOT guarantee
+              a saved push_subscriptions row. */}
+          {pushSupported && perm !== 'denied' && (
+            <Button onClick={handleEnablePush} disabled={pushBusy}>
+              {pushBusy ? 'Enabling…' : perm === 'granted' ? 'Re-subscribe' : 'Enable'}
             </Button>
           )}
         </div>
