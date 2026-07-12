@@ -30,13 +30,6 @@ export default function Layout() {
     navigate('/login', { replace: true })
   }
 
-  const desktopLink = ({ isActive }: { isActive: boolean }) =>
-    `whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-      isActive
-        ? 'bg-brand-50 text-brand-700 dark:bg-brand-600/20 dark:text-brand-300'
-        : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
-    }`
-
   const drawerLink = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium transition ${
       isActive
@@ -48,9 +41,9 @@ export default function Layout() {
     <div className="flex min-h-full flex-col">
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
-          {/* Hamburger — mobile only */}
+          {/* Hamburger — same on every device */}
           <button
-            className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 md:hidden dark:text-slate-300 dark:hover:bg-slate-800"
+            className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
             onClick={() => setDrawerOpen(true)}
             aria-label="Open menu"
           >
@@ -68,16 +61,7 @@ export default function Layout() {
             <span>PlaceMate</span>
           </div>
 
-          {/* Desktop inline nav */}
-          <nav className="hidden flex-1 items-center gap-1 md:flex">
-            {navItems.map((item) => (
-              <NavLink key={item.to} to={item.to} end={item.end} className={desktopLink}>
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-
-          <div className="ml-auto flex items-center gap-1 md:ml-0">
+          <div className="ml-auto flex items-center gap-1">
             <button
               onClick={toggle}
               aria-label="Toggle dark mode"
@@ -86,23 +70,15 @@ export default function Layout() {
             >
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
-            <span className="hidden text-xs text-slate-500 lg:inline">{user?.email}</span>
-            <Button
-              variant="secondary"
-              onClick={handleSignOut}
-              className="hidden md:inline-flex"
-            >
-              Sign out
-            </Button>
           </div>
         </div>
       </header>
 
       <InstallPrompt />
 
-      {/* Mobile slide-over drawer */}
+      {/* Slide-over drawer — same on every device */}
       <div
-        className={`fixed inset-0 z-40 md:hidden ${drawerOpen ? '' : 'pointer-events-none'}`}
+        className={`fixed inset-0 z-40 ${drawerOpen ? '' : 'pointer-events-none'}`}
         aria-hidden={!drawerOpen}
       >
         <div
