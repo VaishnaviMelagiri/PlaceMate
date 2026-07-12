@@ -301,7 +301,7 @@ export default function Reminders() {
       </Card>
 
       {/* List */}
-      <Card className="p-0">
+      <Card className="overflow-x-auto p-0">
         {reminders.length === 0 ? (
           <p className="p-5 text-center text-sm text-slate-500">No reminders yet.</p>
         ) : (

@@ -5,9 +5,13 @@
 // *their* timezone into an absolute UTC instant at creation time — never store
 // a bare local time and compare it against the server clock.
 
-/** A reasonable default when the profile has no timezone yet. */
-export const DEFAULT_TZ =
-  Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata'
+/**
+ * Default timezone when the profile hasn't set one. This app is for MSRIT
+ * students, so we default to Indian Standard Time — every reminder's due_at is
+ * computed from IST wall-clock → UTC unless the user picks another zone on their
+ * profile. (pg_cron + the Edge Function run in UTC and compare the stored UTC.)
+ */
+export const DEFAULT_TZ = 'Asia/Kolkata'
 
 /**
  * The offset (ms) of `timeZone` at the given instant: local - UTC.
