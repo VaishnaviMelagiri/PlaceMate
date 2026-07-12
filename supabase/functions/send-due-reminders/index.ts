@@ -75,8 +75,21 @@ Deno.serve(async () => {
     subsByUser.set(s.user_id, list)
   }
 
+  // Optional email channel (feature-flagged by RESEND_API_KEY). We look up each
+  // affected user's email once so every user gets reminders in their inbox too.
+  const resendKey = Deno.env.get('RESEND_API_KEY')
+  const resendFrom = Deno.env.get('RESEND_FROM') || 'PlaceMate <onboarding@resend.dev>'
+  const emailByUser = new Map<string, string | null>()
+  if (resendKey) {
+    for (const uid of userIds) {
+      const { data } = await supabase.auth.admin.getUserById(uid)
+      emailByUser.set(uid, data.user?.email ?? null)
+    }
+  }
+
   let sent = 0
   let skipped = 0
+  let emailed = 0
 
   for (const r of reminders) {
     // --- Atomic claim: flip to 'sent' only if still due. If another concurrent
@@ -133,10 +146,58 @@ Deno.serve(async () => {
         }
       }
     }
+
+    // --- Optional: email the same reminder to the user's inbox. ---
+    if (resendKey) {
+      const to = emailByUser.get(r.user_id)
+      if (to) {
+        try {
+          await sendEmail(resendKey, resendFrom, to, r.title)
+          emailed++
+        } catch (e) {
+          console.error('resend error', (e as Error).message)
+        }
+      }
+    }
   }
 
-  return json({ processed: reminders.length, sent, skipped }, 200)
+  return json({ processed: reminders.length, sent, emailed, skipped }, 200)
 })
+
+// Send a reminder email via Resend (https://resend.com). Throws on non-2xx.
+async function sendEmail(apiKey: string, from: string, to: string, title: string) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from,
+      to,
+      subject: `⏰ PlaceMate reminder: ${title}`,
+      html: `
+        <div style="font-family:system-ui,sans-serif;max-width:480px;margin:auto">
+          <div style="background:#4f46e5;color:#fff;padding:16px 20px;border-radius:12px 12px 0 0">
+            <strong>🎯 PlaceMate reminder</strong>
+          </div>
+          <div style="border:1px solid #e2e8f0;border-top:none;padding:20px;border-radius:0 0 12px 12px">
+            <p style="font-size:16px;margin:0 0 12px">${escapeHtml(title)}</p>
+            <p style="color:#64748b;font-size:13px;margin:0">
+              Open PlaceMate to update this application or snooze the reminder.
+            </p>
+          </div>
+        </div>`,
+    }),
+  })
+  if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`)
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
+  )
+}
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
