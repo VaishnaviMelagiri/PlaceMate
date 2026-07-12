@@ -46,6 +46,10 @@ sw.addEventListener('push', (event: PushEvent) => {
       icon: '/pwa-192x192.png',
       badge: '/pwa-192x192.png',
       tag: reminderId || undefined, // collapse duplicate fires of the same reminder
+      renotify: Boolean(reminderId), // re-alert even if a same-tag one is showing
+      // Urgent/alarm-like: stay on screen until dismissed + vibrate the phone.
+      requireInteraction: true,
+      vibrate: [300, 120, 300, 120, 300],
       data: { reminderId, url: payload.url || '/' },
       // Snooze reschedules rather than dismissing.
       actions: [
